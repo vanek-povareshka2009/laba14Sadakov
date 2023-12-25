@@ -1,0 +1,3 @@
+-- UPDATE  hotelresident
+-- set name = 'Jora'
+-- where phone = '12345678088'

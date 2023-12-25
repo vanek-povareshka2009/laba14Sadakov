@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Отель</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('https://www.aiutamici.com/PortalWeb/Wallpaper/Feste/FES_00314.jpg');
+
+        }
+
+        .container {
+            margin-top: 50px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #28a745;
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
+
+        .btn-danger {
+            background-color: #f0ad4e;
+            border-color: #eea236;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .blink {
+            animation: blink 2s linear infinite;
+        }
+
+        .light:nth-child(odd) {
+            top: 10%;
+        }
+        .light:nth-child(even) {
+            top: 80%;
+        }
+
+        .snowflakes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            width: 5px;
+            height: 5px;
+            animation: fall 5s linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        #gir {
+            position:fixed;
+            top:0;
+            left:0;
+            background-image:url('http://lh5.googleusercontent.com/-obNunPiVVd4/VJOuk2f29_I/AAAAAAAAE3Y/SOoFIrFTTkk/s800/gerljanda1.png');
+            height:36px;
+            width:100%;
+            overflow:hidden;
+            z-index:99
+        }
+        #nums_1 {padding:100px}
+        .gir_1 {background-position: 0 0}
+        .gir_2 {background-position: 0 -36px}
+        .gir_3 {background-position: 0 -72px}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id="gir" class="gir_3">
+    <div id="nums_1">1</div>
+</div>
+<div class="container">
+    <h3 class="blink">Отфильтровать</h3>
+    <form th:action="@{/hotels/filter}" method="get">
+        <div class="form-group">
+            <label for="name">ФИО</label>
+            <input type="text" class="form-control" id="name" placeholder="ФИО: " name="name" th:value="${name}">
+        </div>
+        <div class="form-group">
+            <label for="passport">Этаж:</label>
+            <input type="text" class="form-control" id="passport" placeholder="Этаж: " name="passport" th:value="${passport}">
+        </div>
+        <div class="form-group">
+            <label for="room">Комната:</label>
+            <input type="text" class="form-control" id="room" placeholder="Комната: " name="room" th:value="${room}">
+        </div>
+        <button type="submit" class="btn btn-primary">Отфильтровать</button>
+    </form>
+    <span id="error-message" style="color: red;"></span>
+    <form th:action="@{/hotels/resetFilter}" method="get">
+        <button type="submit" class="btn btn-danger">Сбросить</button>
+    </form>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>ID клиента</th>
+            <th>ФИО</th>
+            <th>Номер телефона</th>
+            <th>Этаж</th>
+            <th>Номер комнаты</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="hotel : ${hotels}">
+            <td th:text="${hotel.id}"></td>
+            <td th:text="${hotel.name}"></td>
+            <td th:text="${hotel.phone}"></td>
+            <td th:text="${hotel.passport}"></td>
+            <td th:text="${hotel.room}"></td>
+            <td>
+                <a th:href="@{'/hotels/show/' + ${hotel.id}}" th:text="Просмотреть"></a>
+                <a th:href="@{'/hotels/edit/' + ${hotel.id}}" th:text="Редактировать" class="text-info" style="margin-left: 15px"></a>
+                <a th:href="@{'/hotels/delete/' + ${hotel.id}}" th:text="Удалить" class="text-danger" style="margin-left: 15px"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <form th:action="@{/hotels/add}">
+        <button type="submit" class="btn btn-primary">Новый житель</button>
+    </form>
+</div>
+<div class="snowflakes" aria-hidden="true">
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+    <div class="snowflake"></div>
+</div>
+
+<script>
+    // Snowfall Effect
+    const snowflakes = document.querySelector('.snowflakes');
+    for (let i = 0; i < 100; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.style.left = Math.random() * 100 + 'vw';
+        snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+        snowflake.style.opacity = Math.random();
+        snowflake.style.transform = 'scale(' + Math.random() + ')';
+        snowflakes.appendChild(snowflake);
+    }
+
+    function gir() {
+        nums = document.getElementById('nums_1').innerHTML
+        if(nums == 1) {document.getElementById('gir').className='gir_1';document.getElementById('nums_1').innerHTML='2'}
+        if(nums == 2) {document.getElementById('gir').className='gir_2';document.getElementById('nums_1').innerHTML='3'}
+        if(nums == 3) {document.getElementById('gir').className='gir_3';document.getElementById('nums_1').innerHTML='1'}
+    }
+    setInterval(function(){gir()}, 500)
+
+    // Form validation function
+    document.querySelector('form').addEventListener('submit', function(event) {
+        let isValid = false;
+        let errorMessage = '';
+
+        // Validate name if filled
+        const name = document.getElementById('name').value;
+        if (name) {
+            const nameRegex = /^[a-zA-Zа-яА-ЯёЁ.\-]/;
+            if (!nameRegex.test(name)) {
+                errorMessage += 'Вы ввели некорректные данные в поле ФИО. ';
+            } else {
+                isValid = true;
+            }
+        }
+
+        // Validate passport if filled
+        const passport = document.getElementById('passport').value;
+        if (passport) {
+            if (isNaN(passport) || passport < 1 || passport > 20) {
+                errorMessage += 'Вы ввели некорректные данные в поле Этаж. ';
+            } else {
+                isValid = true;
+            }
+        }
+
+        // Validate room if filled
+        const room = document.getElementById('room').value;
+        if (room) {
+            if (isNaN(room) || room < 1 || room > 1000) {
+                errorMessage += 'Вы ввели некорректные данные в поле Комната. ';
+            } else {
+                isValid = true;
+            }
+        }
+
+        // Show error message and prevent form submission if no valid input
+        if (!isValid) {
+            document.getElementById('error-message').textContent = errorMessage;
+            event.preventDefault();
+        }
+    });
+</script>
+</body>
+</html>

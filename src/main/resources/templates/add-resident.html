@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <title>Добавить жителя</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <style>
+    body {
+      background-image: url('https://kartinki.pics/uploads/posts/2021-07/1625721048_40-kartinkin-com-p-smeshnie-novogodnie-oboi-krasivie-44.jpg');
+    }
+
+    .container {
+      margin-top: 50px;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      margin-bottom: 20px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #28a745; /* Зеленый */
+      color: #ffffff;
+    }
+
+    .btn-primary {
+      background-color: #d9534f; /* Красный */
+      border-color: #d43f3a;
+    }
+
+    .btn-danger {
+      background-color: #f0ad4e; /* Золотой */
+      border-color: #eea236;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .blink {
+      animation: blink 2s linear infinite;
+    }
+
+    /* Position lights in two rows */
+    .light:nth-child(odd) { /* Odd lights higher */
+      top: 10%;
+    }
+    .light:nth-child(even) { /* Even lights lower */
+      top: 80%;
+    }
+
+    /* Snow Effect */
+    .snowflakes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      width: 5px;
+      height: 5px;
+      animation: fall 5s linear infinite;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+      }
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <script>
+    // Validation Functions
+    function validatePhoneNumber() {
+      var phoneNumber = document.getElementById('phone').value;
+      var phoneRegex = /^\d{11}$/;
+      var errorMessageElement = document.getElementById('phone-error');
+      if (!phoneRegex.test(phoneNumber)) {
+        errorMessageElement.textContent = 'Введите номер телефона';
+        return false;
+      }
+      errorMessageElement.textContent = '';
+      return true;
+    }
+
+    function validateName() {
+      var name = document.getElementById('name').value;
+      var nameRegex = /^[A-Za-zА-Яа-яЁё\.\-\s]{3,30}$/;
+      var errorMessageElement = document.getElementById('name-error');
+      if (!nameRegex.test(name)) {
+        errorMessageElement.textContent = 'Введите корректные данные';
+        return false;
+      }
+      errorMessageElement.textContent = '';
+      return true;
+    }
+
+
+    function validatePassport() {
+      var passport = document.getElementById('passport').value;
+      var passportRegex = /^(1[0-9]|20|[2-9])$/;
+      var errorMessageElement = document.getElementById('passport-error');
+
+      if (!passportRegex.test(passport)) {
+        errorMessageElement.textContent = 'Номер должен быть в диапазоне от 1 до 20';
+        return false;
+      }
+
+      errorMessageElement.textContent = '';
+      return true;
+    }
+
+
+    function validateRoom() {
+      var room = document.getElementById('room').value;
+      var roomRegex = /^[1-9][0-9]{0,2}$/;
+      var errorMessageElement = document.getElementById('room-error');
+      if (!roomRegex.test(room)) {
+        errorMessageElement.textContent = 'Неверный номер комнаты';
+        return false;
+      }
+      errorMessageElement.textContent = '';
+      return true;
+    }
+  </script>
+</head>
+<body>
+<div class="container">
+  <form th:action="@{/hotels/add}" th:object="${hotel}" method="post" class="form-horizontal" onsubmit="return validatePhoneNumber() && validateName() && validatePassport() && validateRoom();">
+    <h3>Добавить жителя</h3>
+
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+      <input th:field="*{id}" placeholder="ID (*)" class="form-control" type="hidden"/>
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+      <input id="name" th:field="*{name}" placeholder="ФИО Клиента" required class="form-control"/>
+      <span id="name-error" style="color:red;"></span>
+    </div>
+
+
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+      <input id="phone" th:field="*{phone}" placeholder="Номер телефона" required class="form-control"/>
+      <span id="phone-error" style="color:red;"></span>
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+      <input id="passport" th:field="*{passport}" placeholder="Этаж: " required class="form-control"/>
+      <span id="passport-error" style="color:red;"></span>
+    </div>
+
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+      <input id="room" th:field="*{room}" placeholder="Номер комнаты для заселения" required class="form-control"/>
+      <span id="room-error" style="color:red;"></span>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-6 controls">
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </div>
+    </div>
+  </form>
+
+  <form th:action="@{/hotels}">
+    <button type="submit" class="btn btn-danger">Назад на главную</button>
+  </form>
+</div>
+</body>
+</html>
